@@ -1,0 +1,34 @@
+from rest_framework import serializers
+from .models import Categoria, Produto, Pedido, Cliente
+from django.contrib.auth.models import User
+
+class CategoriaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Categoria
+        fields = '__all__'
+
+class ProdutoSerializer(serializers.ModelSerializer):
+    categoria_nome = serializers.ReadOnlyField(source='categoria.nome')
+
+    class Meta:
+        model = Produto
+        fields = ['id', 'nome', 'descricao', 'preco', 'estoque', 'categoria', 'categoria_nome', 'imagem_url']
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email']
+
+class ClienteSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+
+    class Meta:
+        model = Cliente
+        fields = '__all__'
+
+class PedidoSerializer(serializers.ModelSerializer):
+    cliente_nome = serializers.ReadOnlyField(source='cliente.user.username')
+
+    class Meta:
+        model = Pedido
+        fields = ['id', 'cliente', 'cliente_nome', 'data_pedido', 'status', 'total']

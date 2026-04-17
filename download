@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}Página Inicial - Fashion Modas{% endblock %}
+{% block content %}
+<div class="p-5 mb-4 bg-light rounded-3 shadow-sm">
+    <div class="container-fluid py-5">
+        <h1 class="display-5 fw-bold">Bem-vindo à Fashion Modas</h1>
+        <p class="col-md-8 fs-4">A melhor loja de roupas online. Explore nossas coleções e gerencie seu estoque com facilidade.</p>
+        {% if not user.is_authenticated %}
+        <a href="{% url 'register' %}" class="btn btn-primary btn-lg">Comece Agora</a>
+        {% endif %}
+    </div>
+</div>
+
+<h2 class="mb-4">Produtos em Destaque</h2>
+<div class="row">
+    {% for produto in produtos %}
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+            {% if produto.imagem_url %}
+            <img src="{{ produto.imagem_url }}" class="card-img-top" alt="{{ produto.nome }}" style="height: 200px; object-fit: cover;">
+            {% else %}
+            <div class="bg-secondary text-white d-flex align-items-center justify-content-center" style="height: 200px;">Sem Imagem</div>
+            {% endif %}
+            <div class="card-body">
+                <h5 class="card-title">{{ produto.nome }}</h5>
+                <p class="card-text text-truncate">{{ produto.descricao }}</p>
+                <p class="fw-bold text-primary">R$ {{ produto.preco }}</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="badge bg-info text-dark">{{ produto.categoria.nome }}</span>
+                    <small class="text-muted">Estoque: {{ produto.estoque }}</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="alert alert-warning">Nenhum produto cadastrado no momento.</div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

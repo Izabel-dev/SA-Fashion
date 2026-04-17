@@ -1,0 +1,122 @@
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth import login, authenticate
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.urls import reverse_lazy
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from .models import Categoria, Produto, Pedido, Cliente
+from .forms import UserRegisterForm, CategoriaForm, ProdutoForm, PedidoForm
+
+def home(request):
+    produtos = Produto.objects.all()[:6]
+    return render(request, 'loja/home.html', {'produtos': produtos})
+
+def register(request):
+    if request.method == 'POST':
+        form = UserRegisterForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            # Criar perfil de cliente automaticamente
+            Cliente.objects.create(user=user, telefone='', endereco='')
+            messages.success(request, f'Conta criada com sucesso! Faça login para continuar.')
+            return redirect('login')
+    else:
+        form = UserRegisterForm()
+    return render(request, 'registration/register.html', {'form': form})
+
+# CRUD Categorias
+class CategoriaListView(LoginRequiredMixin, ListView):
+    model = Categoria
+    template_name = 'loja/categoria_list.html'
+    context_object_name = 'categorias'
+
+class CategoriaCreateView(LoginRequiredMixin, CreateView):
+    model = Categoria
+    form_class = CategoriaForm
+    template_name = 'loja/categoria_form.html'
+    success_url = reverse_lazy('categoria_list')
+    def form_valid(self, form):
+        messages.success(self.request, "Categoria criada com sucesso!")
+        return super().form_valid(form)
+
+class CategoriaUpdateView(LoginRequiredMixin, UpdateView):
+    model = Categoria
+    form_class = CategoriaForm
+    template_name = 'loja/categoria_form.html'
+    success_url = reverse_lazy('categoria_list')
+    def form_valid(self, form):
+        messages.success(self.request, "Categoria atualizada com sucesso!")
+        return super().form_valid(form)
+
+class CategoriaDeleteView(LoginRequiredMixin, DeleteView):
+    model = Categoria
+    template_name = 'loja/confirm_delete.html'
+    success_url = reverse_lazy('categoria_list')
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, "Categoria excluída com sucesso!")
+        return super().delete(request, *args, **kwargs)
+
+# CRUD Produtos
+class ProdutoListView(LoginRequiredMixin, ListView):
+    model = Produto
+    template_name = 'loja/produto_list.html'
+    context_object_name = 'produtos'
+
+class ProdutoCreateView(LoginRequiredMixin, CreateView):
+    model = Produto
+    form_class = ProdutoForm
+    template_name = 'loja/produto_form.html'
+    success_url = reverse_lazy('produto_list')
+    def form_valid(self, form):
+        messages.success(self.request, "Produto criado com sucesso!")
+        return super().form_valid(form)
+
+class ProdutoUpdateView(LoginRequiredMixin, UpdateView):
+    model = Produto
+    form_class = ProdutoForm
+    template_name = 'loja/produto_form.html'
+    success_url = reverse_lazy('produto_list')
+    def form_valid(self, form):
+        messages.success(self.request, "Produto atualizado com sucesso!")
+        return super().form_valid(form)
+
+class ProdutoDeleteView(LoginRequiredMixin, DeleteView):
+    model = Produto
+    template_name = 'loja/confirm_delete.html'
+    success_url = reverse_lazy('produto_list')
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, "Produto excluído com sucesso!")
+        return super().delete(request, *args, **kwargs)
+
+# CRUD Pedidos
+class PedidoListView(LoginRequiredMixin, ListView):
+    model = Pedido
+    template_name = 'loja/pedido_list.html'
+    context_object_name = 'pedidos'
+
+class PedidoCreateView(LoginRequiredMixin, CreateView):
+    model = Pedido
+    form_class = PedidoForm
+    template_name = 'loja/pedido_form.html'
+    success_url = reverse_lazy('pedido_list')
+    def form_valid(self, form):
+        messages.success(self.request, "Pedido registrado com sucesso!")
+        return super().form_valid(form)
+
+class PedidoUpdateView(LoginRequiredMixin, UpdateView):
+    model = Pedido
+    form_class = PedidoForm
+    template_name = 'loja/pedido_form.html'
+    success_url = reverse_lazy('pedido_list')
+    def form_valid(self, form):
+        messages.success(self.request, "Pedido atualizado com sucesso!")
+        return super().form_valid(form)
+
+class PedidoDeleteView(LoginRequiredMixin, DeleteView):
+    model = Pedido
+    template_name = 'loja/confirm_delete.html'
+    success_url = reverse_lazy('pedido_list')
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, "Pedido cancelado/excluído com sucesso!")
+        return super().delete(request, *args, **kwargs)
