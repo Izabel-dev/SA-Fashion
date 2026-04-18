@@ -25,7 +25,7 @@ Siga os passos abaixo para configurar e rodar o projeto localmente:
 1.  **Clone o repositório (se aplicável) ou navegue até a pasta do projeto:**
 
     ```bash
-    cd /home/ubuntu
+    cd /home/
     ```
 
 2.  **Instale as dependências do Python:**
